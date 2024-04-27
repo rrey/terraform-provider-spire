@@ -81,6 +81,9 @@ jobs:
           terraform_version: ${{ matrix.terraform }}
           terraform_wrapper: false
       - run: go mod download
+      - run: wget https://github.com/spiffe/spire/releases/download/v1.9.3/spire-1.9.3-linux-amd64-musl.tar.gz
+      - run: tar zxf spire-1.9.3-linux-amd64-musl.tar.gz
+      - run: spire-1.9.3/bin/spire-server run -config spire-1.9.3/conf/server/server.conf &
       - env:
           TF_ACC: "1"
         run: go test -v -cover ./internal/provider/
