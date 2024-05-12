@@ -12,3 +12,10 @@ testacc: install
 .PHONY: gendoc
 gendoc:
 	GOOS=darwin GOARCH=amd64 go generate ./...
+
+.PHONY: fixture
+fixture:
+	./spire-1.9.3/bin/spire-server entry create \
+		-parentID spiffe://example.org/some/path \
+		-spiffeID spiffe://example.org/some/datasource-test \
+	    -selector "unix:uid:501"

@@ -73,7 +73,7 @@ func (p *SpireProvider) Resources(ctx context.Context) []func() resource.Resourc
 
 func (p *SpireProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		NewExampleDataSource,
+		NewSpireEntryDataSource,
 	}
 }
 

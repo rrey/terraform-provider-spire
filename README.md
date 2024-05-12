@@ -7,7 +7,7 @@ This provider allows to interact with [SPIRE](https://spiffe.io/docs/latest/depl
 **Warning**: A SPIRE Server must be started locally to run the tests since the unix socket must be reachable.
 You can download the binaries and start the server with the following command:
 ```bash
-./bin/spire-server run
+./<path-to-spire-dir>/bin/spire-server run
 ```
 
 To run the acceptance tests:

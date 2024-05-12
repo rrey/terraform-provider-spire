@@ -81,9 +81,12 @@ jobs:
           terraform_version: ${{ matrix.terraform }}
           terraform_wrapper: false
       - run: go mod download
+      # Start a SPIRE server to run the test against it
       - run: wget https://github.com/spiffe/spire/releases/download/v1.9.3/spire-1.9.3-linux-amd64-musl.tar.gz
       - run: tar zxf spire-1.9.3-linux-amd64-musl.tar.gz
       - run: spire-1.9.3/bin/spire-server run -config spire-1.9.3/conf/server/server.conf &
+      # Create data in SPIRE server that are expected for tests (ex: for datasources)
+      - run: make fixture
       - env:
           TF_ACC: "1"
         run: go test -v -cover ./internal/provider/
