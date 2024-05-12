@@ -32,6 +32,7 @@ func NewSpireEntryResource() resource.Resource {
 type SpireEntryResource struct {
 	client entryv1.EntryClient
 }
+
 type SpiffeIdModel struct {
 	TrustDomain types.String `tfsdk:"trust_domain"`
 	Path        types.String `tfsdk:"path"`
