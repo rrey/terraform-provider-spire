@@ -13,7 +13,6 @@ import (
 	entryv1 "github.com/spiffe/spire-api-sdk/proto/spire/api/server/entry/v1"
 	spireTypes "github.com/spiffe/spire-api-sdk/proto/spire/api/types"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -89,15 +88,18 @@ func (d *SpireEntryDataSource) Configure(ctx context.Context, req datasource.Con
 		return
 	}
 
-	conn, err := grpc.Dial("unix:/tmp/spire-server/private/api.sock", grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
+	client, ok := req.ProviderData.(*grpc.ClientConn)
+
+	if !ok {
 		resp.Diagnostics.AddError(
-			"Failed to Grpc",
-			err.Error(),
+			"Unexpected Resource Configure Type",
+			fmt.Sprintf("Expected *grpc.ClientConn, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
+
+		return
 	}
-	//defer conn.Close()
-	d.client = entryv1.NewEntryClient(conn)
+
+	d.client = entryv1.NewEntryClient(client)
 }
 
 func (d *SpireEntryDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {

@@ -4,6 +4,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -17,7 +18,6 @@ import (
 	entryv1 "github.com/spiffe/spire-api-sdk/proto/spire/api/server/entry/v1"
 	spireTypes "github.com/spiffe/spire-api-sdk/proto/spire/api/types"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 // Ensure provider defined types fully satisfy framework interfaces.
@@ -106,15 +106,18 @@ func (r *SpireEntryResource) Configure(ctx context.Context, req resource.Configu
 		return
 	}
 
-	conn, err := grpc.Dial("unix:/tmp/spire-server/private/api.sock", grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
+	client, ok := req.ProviderData.(*grpc.ClientConn)
+
+	if !ok {
 		resp.Diagnostics.AddError(
-			"Failed to Grpc",
-			err.Error(),
+			"Unexpected Resource Configure Type",
+			fmt.Sprintf("Expected *grpc.ClientConn, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
+
+		return
 	}
-	//defer conn.Close()
-	r.client = entryv1.NewEntryClient(conn)
+
+	r.client = entryv1.NewEntryClient(client)
 }
 
 func (r *SpireEntryResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
