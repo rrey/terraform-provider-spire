@@ -4,7 +4,6 @@ package provider
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/function"
@@ -12,6 +11,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 // Ensure SpireProvider satisfies various provider interfaces.
@@ -56,11 +57,13 @@ func (p *SpireProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		return
 	}
 
-	// Configuration values are now available.
-	// if data.Endpoint.IsNull() { /* ... */ }
-
-	// Example client configuration for data sources and resources
-	client := http.DefaultClient
+	client, err := grpc.Dial("unix:/tmp/spire-server/private/api.sock", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Failed to setup grpc connection",
+			err.Error(),
+		)
+	}
 	resp.DataSourceData = client
 	resp.ResourceData = client
 }
