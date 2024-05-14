@@ -78,9 +78,7 @@ func (p *SpireProvider) DataSources(ctx context.Context) []func() datasource.Dat
 }
 
 func (p *SpireProvider) Functions(ctx context.Context) []func() function.Function {
-	return []func() function.Function{
-		NewExampleFunction,
-	}
+	return []func() function.Function{}
 }
 
 func New(version string) func() provider.Provider {
