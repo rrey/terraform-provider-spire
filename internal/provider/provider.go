@@ -57,7 +57,7 @@ func (p *SpireProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		return
 	}
 
-	client, err := grpc.Dial("unix:/tmp/spire-server/private/api.sock", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	client, err := grpc.NewClient("unix:/tmp/spire-server/private/api.sock", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Failed to setup grpc connection",
